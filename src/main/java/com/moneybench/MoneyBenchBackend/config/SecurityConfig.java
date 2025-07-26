@@ -31,23 +31,21 @@ public class SecurityConfig
     private final AppUserDetailsService appUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
-    // Uncomment this and modify if you want to use in-memory users for testing
-    // @Bean
-    // public UserDetailsService userDetailsService() {
-    //     UserDetails admin = User.builder()
-    //             .username("admin")
-    //             .password(passwordEncoder().encode("admin123")) // encoded password
-    //             .roles("ADMIN")
-    //             .build();
-    //
-    //     UserDetails user = User.builder()
-    //             .username("user")
-    //             .password(passwordEncoder().encode("user123"))
-    //             .roles("USER")
-    //             .build();
-    //
-    //     return new InMemoryUserDetailsManager(admin, user);
-    // }
+    // Uncomment and modify if you want to use in-memory for tests
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails admin = User.builder()
+//                .username("admin")
+//                .password(passwordEncoder().encode("admin123"))
+//                .roles("ADMIN")
+//                .build();
+//        UserDetails user = User.builder()
+//                .username("user")
+//                .password(passwordEncoder().encode("user123"))
+//                .roles("USER")
+//                .build();
+//        return new InMemoryUserDetailsManager(admin, user);
+//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -56,43 +54,41 @@ public class SecurityConfig
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/v1.0/profile/register",
-                                "/api/v1.0/profile/activate",
-                                "/api/v1.0/profile/login",
-                                "/api/v1.0/health/**",
-                                "/api/v1.0/status/**"
+                                "/profile/register",
+                                "/profile/activate",
+                                "/profile/login",
+                                "/health/**",
+                                "/status/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
-                // Disable default HTTP Basic auth for JWT-based stateless security
-                // .httpBasic(Customizer.withDefaults())
-                // Add JWT filter before username/password authentication filter
+                // Disable HTTP Basic auth to rely fully on JWT
+                //.httpBasic(Customizer.withDefaults())
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                // Set session management to stateless because we use JWTs
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
 
-    // Commented legacy alternative; keep if you want formLogin or other settings later
-    // @Bean
-    // public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception
-    // {
-    //     httpSecurity.cors(Customizer.withDefaults())
-    //             .csrf(AbstractHttpConfigurer::disable)
-    //             .authorizeHttpRequests(auth -> auth.requestMatchers(
-    //                             "/api/v1.0/profile/register",
-    //                             "/api/v1.0/profile/activate",
-    //                             "/api/v1.0/profile/login",
-    //                             "/api/v1.0/health",
-    //                             "/api/v1.0/status"
-    //                     ).permitAll()
-    //                     .and().formLogin(Customizer.withDefaults())
-    //                     .anyRequest().authenticated());
-    //     //.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-    //     //.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-    //     return httpSecurity.build();
-    // }
+    // Legacy example config for form login, disabled for now
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception
+//    {
+//        httpSecurity.cors(Customizer.withDefaults())
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(auth -> auth.requestMatchers(
+//                                "/api/v1.0/profile/register",
+//                                "/api/v1.0/profile/activate",
+//                                "/api/v1.0/profile/login",
+//                                "/api/v1.0/health",
+//                                "/api/v1.0/status"
+//                        ).permitAll()
+//                        .and().formLogin(Customizer.withDefaults())
+//                        .anyRequest().authenticated());
+//        //.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//        //.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//        return httpSecurity.build();
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder()

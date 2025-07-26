@@ -6,7 +6,6 @@ import com.moneybench.MoneyBenchBackend.service.ProfileService;
 
 import lombok.RequiredArgsConstructor;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,20 +19,20 @@ public class ProfileController
 
     private final ProfileService profileService;
 
-    @PostMapping("/register")
+    @PostMapping("/profile/register")
     public ResponseEntity<ProfileDTO> registerProfile(@RequestBody ProfileDTO profileDTO)
     {
         ProfileDTO registeredProfile = profileService.registerProfile(profileDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(registeredProfile);
     }
 
-    @GetMapping("/activate")
+    @GetMapping("/profile/activate")
     public ResponseEntity<String> activateProfile(@RequestParam String token)
     {
         boolean isActivated = profileService.activateProfile(token);
         if (isActivated)
         {
-            return ResponseEntity.ok("Profile activation successfull");
+            return ResponseEntity.ok("Profile activation successful");
         }
         else
         {
@@ -41,7 +40,7 @@ public class ProfileController
         }
     }
 
-    @PostMapping("/login")
+    @PostMapping("/profile/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody AuthDTO authDTO)
     {
         try
