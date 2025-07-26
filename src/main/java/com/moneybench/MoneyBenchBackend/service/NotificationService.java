@@ -4,16 +4,14 @@ import com.moneybench.MoneyBenchBackend.dto.ExpenseDTO;
 import com.moneybench.MoneyBenchBackend.entity.ProfileEntity;
 import com.moneybench.MoneyBenchBackend.repository.ProfileRepository;
 
-
-//other classes
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -28,8 +26,8 @@ public class NotificationService {
     @Value("${money.manager.frontend.url}")
     private String frontendUrl;
 
-
-    @Scheduled(cron = "0 0 22 * * *", zone = "IST")
+    // Changed zone from "IST" to "Asia/Kolkata" - safer and standard timezone ID
+    @Scheduled(cron = "0 0 22 * * *", zone = "Asia/Kolkata")
     public void sendDailyIncomeExpenseReminder() {
         log.info("Job started: sendDailyIncomeExpenseReminder()");
         List<ProfileEntity> profiles = profileRepository.findAll();
@@ -38,12 +36,13 @@ public class NotificationService {
                     + "This is a friendly reminder to add your income and expenses for today in Money Manager.<br><br>"
                     + "<a href="+frontendUrl+" style='display:inline-block;padding:10px 20px;background-color:#4CAF50;color:#fff;text-decoration:none;border-radius:5px;font-weight:bold;'>Go to Money Manager</a>"
                     + "<br><br>Best regards,<br>Money Manager Team";
-            emailService.sendEmail(profile.getEmail(), "Daily reminder: Add your income and expenses", body);
+            // Use HTML email sender here because body contains HTML tags
+            emailService.sendHtmlEmail(profile.getEmail(), "Daily reminder: Add your income and expenses", body);
         }
         log.info("Job completed: sendDailyIncomeExpenseReminder()");
     }
 
-    @Scheduled(cron = "0 0 23 * * *", zone = "IST")
+    @Scheduled(cron = "0 0 23 * * *", zone = "Asia/Kolkata")
     public void sendDailyExpenseSummary() {
         log.info("Job started: sendDailyExpenseSummary()");
         List<ProfileEntity> profiles = profileRepository.findAll();
@@ -64,7 +63,8 @@ public class NotificationService {
                 }
                 table.append("</table>");
                 String body = "Hi "+profile.getFullName()+",<br/><br/> Here is a summary of your expenses for today:<br/><br/>"+table+"<br/><br/>Best regards,<br/>Money Manager Team";
-                emailService.sendEmail(profile.getEmail(), "Your daily Expense summary", body);
+                // Use HTML email sender here as well
+                emailService.sendHtmlEmail(profile.getEmail(), "Your daily Expense summary", body);
             }
         }
         log.info("Job completed: sendDailyExpenseSummary()");
