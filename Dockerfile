@@ -15,7 +15,8 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Copy the jar from the builder stage
-COPY --from=builder /app/target/moneymanager-0.0.1-SNAPSHOT.jar moneymanager-v1.0.jar
+
+COPY --from=builder /app/target/moneybench-0.0.1-SNAPSHOT.jar moneybench-v1.0.jar
 
 EXPOSE 9090
 
