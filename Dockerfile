@@ -18,6 +18,10 @@ WORKDIR /app
 
 COPY --from=builder /app/target/moneybench-0.0.1-SNAPSHOT.jar moneybench-v1.0.jar
 
+
 EXPOSE 9090
 
-ENTRYPOINT ["java", "-jar", "moneymanager-v1.0.jar"]
+
+
+#added correct entry point
+ENTRYPOINT ["java", "-jar", "moneybench-v1.0.jar"]
