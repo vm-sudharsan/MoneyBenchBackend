@@ -31,6 +31,7 @@ public class SecurityConfig
     private final AppUserDetailsService appUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
+    //done
     // Uncomment and modify if you want to use in-memory for tests
 //    @Bean
 //    public UserDetailsService userDetailsService() {
